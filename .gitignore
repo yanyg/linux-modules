@@ -1,0 +1,9 @@
+# ignore modules compiled-files
+*.o
+*.ko
+.*.cmd
+.tmp_versions
+modules.order
+Module.symvers
+*.mod.[co]
+*.swp
