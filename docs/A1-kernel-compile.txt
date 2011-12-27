@@ -1,0 +1,72 @@
+make tags
+生成tags文件，供浏览代码使用。
+make cscope
+生成cscope索引文件，也是为了方便浏览源代码。
+
+make oldconfig
+在旧的.config基础上生成新的.config，非常有用。
+make silentoldconfig
+同上，但比较安静。;)
+make defconfig
+生成包含全部默认选项的.config文件。
+make allyesconfig
+生成包含全部选项的.config文件。
+make allnoconfig
+拒绝全部选项。
+make randconfig
+随机选择一些选项，一般供开发者测试使用。
+make {config|xconfig|gconfig|menuconfig}
+手工选择选项，只是用户界面不同，比如xconfig和gconfig都是图形界面的。
+
+make
+默认编译。
+make bzImage
+编译生成压缩的内核二进制文件，一般你用到的是这个。
+make vmlinux
+编译生成纯二进制内核文件。
+make modules
+编译生成内核模块。
+make modules_install
+安装生成的内核模块。
+make {bzdisk|fdimage|isoimage}
+编译生成启动软盘镜像，或光盘镜像。
+make install
+安装编译生成的内核文件，包括设置你的Lilo或Grub。
+make all
+等价于vmlinux+modules+bzImage。
+make rpm
+构建内核rpm包。
+make foo/bar/foobar.ko
+编译单个内核源文件。
+make headers_install
+安装内核头文件，默认安装到usr目录。
+make M=some/sub/dir
+编译一个指定的目录。
+make O=/path/to/some/dir
+把编译过程中生成的文件都放到指定目录中去。
+make C={1|2}
+用sparse检查内核代码。
+make V={0|1|2}
+控制编译过程中输出信息的多少。
+
+make help
+列出所有的make目标及其相关描述。
+make kernelversion
+输出Makefile里读到的内核版本信息。
+make kernelrelease
+输出内核发行标识。
+
+make {rpm-pkg|deb-pkg|tar-pkg|targz-pkg|tarbz2-pkg}
+构建{rpm|deb|tar|tar.gz|tar.bz2}格式的内核包。
+
+make {htmldocs|mandocs|pdfdocs|psdocs|xmldocs}
+生成{html|man|pdf|ps|xml}格式的内核文档。
+
+备注(by teddyteddyb)：在fedora14上需要安装xmlto和xmlto-tex 命令:yum install xmlto xmlto-tex
+
+make clean
+清理生成文件，但会保留.config和一些模块文件。
+make mrproper
+清理全部文件，包括.config和一些备份文件。
+make distclean
+在make mrproper的基础上还清理编辑器可能生成的备份文件，patch的rej文件等。
