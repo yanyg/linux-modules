@@ -54,6 +54,26 @@ static int cmos_release(struct inode *inode, struct file *file)
 
 static ssize_t cmos_read(struct file *file, char *buf, size_t count, loff_t *ppos)
 {
+	struct cmos_dev *devp = file->rpivate_data;
+	char data[CMOS_BANK_SIZE];
+	unsigned char mask;
+	int xferred = 0, i = 0, l , zero_out;
+	int start_byte = devp->current_pointer/8;
+	int start_bit = devp_current_pointer%8;
+
+	if ( devp->current_pointer >= devp->size ) {
+		return 0;
+	}
+
+	if ( devp->current_pointer + count > devp->size ) {
+		count = devp->size - devp->current_pointer;
+	}
+
+	while ( xferred < count ) {
+		data[i] = port_data_in(start_byte, devp->bank_number) >> start_bit;
+
+	}
+
 	return -1;
 }
 
