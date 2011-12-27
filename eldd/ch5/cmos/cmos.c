@@ -3,6 +3,7 @@
 #include <linux/kernel.h>
 #include <linux/device.h>
 #include <linux/slab.h>
+#include <linux/io.h>
 
 #include <linux/cdev.h>
 #include <linux/fs.h>
@@ -52,29 +53,77 @@ static int cmos_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+unsigned char port_data_in(unsigned char offset, int bank)
+{
+	unsigned char data;
+
+	if (unlikely(bank >= NUM_CMOS_BANKS)) {
+		printk(KERN_WARNING "unknown cmos bank.\n");
+		return 0;
+	} else {
+		outb(offset, addrports[bank]);
+		data = inb(dataports[bank]);
+	}
+
+	return data;
+}
+
+void port_data_out(unsigned char offset, unsigned char data, int bank)
+{
+	if (unlikely(bank >= NUM_CMOS_BANKS)) {
+		printk(KERN_WARNING "unknown cmos bank.\n");
+		return;
+	} else {
+		outb(offset, addrports[bank]);
+		outb(data, dataports[bank]);
+	}
+}
+
 static ssize_t cmos_read(struct file *file, char *buf, size_t count, loff_t *ppos)
 {
-	struct cmos_dev *devp = file->rpivate_data;
+	struct cmos_dev *devp = file->private_data;
 	char data[CMOS_BANK_SIZE];
 	unsigned char mask;
 	int xferred = 0, i = 0, l , zero_out;
 	int start_byte = devp->current_pointer/8;
-	int start_bit = devp_current_pointer%8;
+	int start_bit = devp->current_pointer%8;
 
-	if ( devp->current_pointer >= devp->size ) {
+	if (devp->current_pointer >= devp->size)
 		return 0;
-	}
 
-	if ( devp->current_pointer + count > devp->size ) {
+	if (devp->current_pointer + count > devp->size)
 		count = devp->size - devp->current_pointer;
-	}
 
-	while ( xferred < count ) {
+	while (xferred < count) {
 		data[i] = port_data_in(start_byte, devp->bank_number) >> start_bit;
 
+		xferred += (8 - start_bit);
+		if ((start_bit) && (count + start_bit > 8)) {
+			data[i] |= (port_data_in(start_byte + 1,
+				devp->bank_number) << (8 - start_bit));
+
+		xferred += start_bit;
+		}
+		++start_byte;
+		++i;
 	}
 
-	return -1;
+	if (xferred > count) {
+		zero_out = xferred - count;
+		mask = 1 << (8 - zero_out);
+		for (l = 0; l < zero_out; ++l) {
+			data[i-1] &= ~mask;
+			mask<<= 1;
+		}
+		xferred = count;
+	}
+
+	if (!xferred)
+		return -EIO;
+
+	devp->current_pointer += xferred;
+
+	return xferred;
 }
 
 static ssize_t cmos_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
