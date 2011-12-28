@@ -128,7 +128,7 @@ static ssize_t cmos_read(struct file *file, char *buf, size_t count, loff_t *ppo
 
 static ssize_t cmos_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
 {
-	return -1;
+	return -EIO;
 }
 
 static loff_t cmos_llseek(struct file *file, loff_t offset, int orig)
