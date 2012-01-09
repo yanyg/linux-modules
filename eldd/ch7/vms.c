@@ -16,6 +16,8 @@ static ssize_t vms_write(struct device *dev,
 
 	sscanf(buf, "%d %d", &x, &y);
 
+	printk(KERN_INFO "x = %d, y = %d", x, y);
+
 	input_report_rel(vms_input_dev, REL_X, x);
 	input_report_rel(vms_input_dev, REL_Y, y);
 	input_sync(vms_input_dev);
@@ -23,7 +25,7 @@ static ssize_t vms_write(struct device *dev,
 	return count;
 }
 
-DEVICE_ATTR(coordinates, 0644, NULL, vms_write);
+DEVICE_ATTR(coordinates, 0666, NULL, vms_write);
 
 static struct attribute *vms_attrs[] = {
 	&dev_attr_coordinates.attr,
