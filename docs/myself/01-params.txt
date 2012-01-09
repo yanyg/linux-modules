@@ -1,0 +1,33 @@
+* macros
+MODULE_LICENSE(license)
+	valid license:
+	GPL
+	GPL v2
+	GPL and additional rights
+	Dual BSD/GPL
+	DUAL MIT/GPL
+	Dual MPL/GPL
+
+MODULE_AUTHOR(author)
+	normal value is "Name <email>"
+
+MODULE_DESCRIPTION(desc)
+	what the module does
+
+MODULE_PARM_DESC(param, desc)
+	what the paramter does
+
+MODULE_DEVICE_TABLE(type, name)
+	e.g.:
+	MODULE_DEVICE_TABLE(pci, port_pci_ids)
+	and the port_pci_ids definitions as
+	"static const struct pci_device_id port_pci_ids[]=..."
+
+MODULE_VERSION(version)
+	MODULE_VERSION("1.0.0");
+
+MODULE_FIRMWARE(firmware)
+	e.g.:
+	MODULE_FIRMWARE("yc/ycbus.bin");
+
+* parameters
